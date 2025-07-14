@@ -132,7 +132,7 @@ const Navbar = () => {
                 to="/signup"
                 className="text-sm font-semibold leading-6 text-gray-900"
               >
-                Signup <span aria-hidden="true">&rarr;</span>
+                Signup
                 {/* <div className="text-xs text-red-600">
                   {errors.isAuthenticated}
                 </div> */}
@@ -140,7 +140,7 @@ const Navbar = () => {
             </button>
           )}
           <button onClick={() => setShowDropdownMenu((prev) => !prev)}>
-            <i className="fas fa-chevron-down ml-1"></i>
+            <i className="fas fa-chevron-down ml-2 text-xs text-gray-500"></i>
           </button>
         </div>
       </nav>
@@ -148,18 +148,21 @@ const Navbar = () => {
         <div className="absolute right-0 mt-2 w-48 bg-slate-50 rounded shadow-lg py-2 z-50">
           <Link
             to="/profile"
+            onClick={() => setShowDropdownMenu((prev) => !prev)}
             className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
           >
             Profile
           </Link>
           <Link
             to="/settings"
+            onClick={() => setShowDropdownMenu((prev) => !prev)}
             className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
           >
             Settings
           </Link>
           <Link
             to="/login"
+            onClick={() => setShowDropdownMenu((prev) => !prev)}
             className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
           >
             Login
