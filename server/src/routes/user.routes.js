@@ -3,11 +3,13 @@ const userRouter = Router() ;
 const verifyJWT  = require("../middlewares/auth.middleware");
 const {upload } = require("../middlewares/multer.middleware")
 
-const { login , signup , updatePassword , updateAccountDetails , userData , updateAvatar , updateCoverImage } = require("../controllers/user.controller");
+const { login , signup , updatePassword , updateAccountDetails , userData , updateAvatar , updateCoverImage , logout , refreshAccessToken } = require("../controllers/user.controller");
 
 userRouter.route("/login").post( login );
 userRouter.route("/signup").post( signup ) ;
 
+userRouter.route("/logout").post( logout ) ;
+userRouter.route("/refresh-token").post(refreshAccessToken)
 userRouter.route("/userData").get( verifyJWT , userData ) ;
 userRouter.route("/updatePassword").patch(verifyJWT , updatePassword );
 userRouter.route("/updateAccountDetails").patch( verifyJWT , updateAccountDetails) ;
