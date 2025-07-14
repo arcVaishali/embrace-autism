@@ -8,7 +8,7 @@ const Navbar = () => {
   const [errors, setErrors] = useState({});
   const [showDropdownMenu, setShowDropdownMenu] = useState(false);
 
-  const navigate = useNavigate() ;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -32,24 +32,25 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = () => {
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL ;
-    fetch(`${API_BASE_URL}/users/logout` , {
-      method : "POST" ,
-      headers : {"Content-Type" : "application/json"},
-      credentials : "include"
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    fetch(`${API_BASE_URL}/users/logout`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
     })
-    .then(async (res)=>{
-      const ret = await res.json() ;
-      if ( res.ok ) {
-        console.log("Successful Logout")
-        setIsAuthenticated(false) ;
-        setShowDropdownMenu(false) ;
-        navigate("/");
-      } else {
-        console.log( ret ) ;
-      }
-    }).catch((err)=> console.log(err))
-  }
+      .then(async (res) => {
+        const ret = await res.json();
+        if (res.ok) {
+          console.log("Successful Logout");
+          setIsAuthenticated(false);
+          setShowDropdownMenu(false);
+          navigate("/");
+        } else {
+          console.log(ret);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <header className="fixed top-0 w-full z-50 bg-white/60 backdrop-blur-3xl border-b border-white/20">
@@ -157,7 +158,16 @@ const Navbar = () => {
           >
             Settings
           </Link>
-          <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">
+          <Link
+            to="/login"
+            className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+          >
+            Login
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+          >
             Logout
           </button>
         </div>
