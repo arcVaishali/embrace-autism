@@ -133,9 +133,9 @@ const Navbar = () => {
                 className="text-sm font-semibold leading-6 text-gray-900"
               >
                 Signup <span aria-hidden="true">&rarr;</span>
-                <div className="text-xs text-red-600">
+                {/* <div className="text-xs text-red-600">
                   {errors.isAuthenticated}
-                </div>
+                </div> */}
               </Link>
             </button>
           )}
