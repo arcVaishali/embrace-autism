@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Haze from "./Haze";
 
 const Navbar = () => {
   const [thisUser, setThisUser] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [errors, setErrors] = useState({});
+  const [showDropdownMenu, setShowDropdownMenu] = useState(false);
+
+  const navigate = useNavigate() ;
 
   useEffect(() => {
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -27,24 +30,40 @@ const Navbar = () => {
         console.log("Some Error Occurred fetching user details");
       });
   }, []);
+
+  const handleLogout = () => {
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL ;
+    fetch(`${API_BASE_URL}/users/logout` , {
+      method : "POST" ,
+      headers : {"Content-Type" : "application/json"},
+      credentials : "include"
+    })
+    .then(async (res)=>{
+      const ret = await res.json() ;
+      if ( res.ok ) {
+        console.log("Successful Logout")
+        setIsAuthenticated(false) ;
+        setShowDropdownMenu(false) ;
+        navigate("/");
+      } else {
+        console.log( ret ) ;
+      }
+    }).catch((err)=> console.log(err))
+  }
+
   return (
-    <header className="absolute inset-x-0 top-0 z-50">
+    <header className="fixed top-0 w-full z-50 bg-white/60 backdrop-blur-3xl border-b border-white/20">
       <Haze />
       <nav
         className="flex items-center justify-between p-6 lg:px-8"
         aria-label="Global"
       >
         <div className="flex lg:flex-1">
-          <Link to="/" className="-m-1.5 p-1.5">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-              Embrace
-            </h1>
-            <p
-              className="tracking-tight text-gray-500"
-              style={{ marginLeft: "65px", marginTop: "-11px" }}
-            >
-              AUTISM
-            </p>
+          <Link to="/" className="">
+            <img
+              src="https://res.cloudinary.com/dvny8jtdq/image/upload/v1752483724/embrace_autism_logo-removebg-preview_dsbqkd.png"
+              className="w-10 h-10"
+            />
           </Link>
         </div>
 
@@ -113,12 +132,36 @@ const Navbar = () => {
                 className="text-sm font-semibold leading-6 text-gray-900"
               >
                 Signup <span aria-hidden="true">&rarr;</span>
-                <div className="text-xs text-red-600">{errors.isAuthenticated}</div>
+                <div className="text-xs text-red-600">
+                  {errors.isAuthenticated}
+                </div>
               </Link>
             </button>
           )}
+          <button onClick={() => setShowDropdownMenu((prev) => !prev)}>
+            <i className="fas fa-chevron-down ml-1"></i>
+          </button>
         </div>
       </nav>
+      {showDropdownMenu && (
+        <div className="absolute right-0 mt-2 w-48 bg-slate-50 rounded shadow-lg py-2 z-50">
+          <Link
+            to="/profile"
+            className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+          >
+            Profile
+          </Link>
+          <Link
+            to="/settings"
+            className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+          >
+            Settings
+          </Link>
+          <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">
+            Logout
+          </button>
+        </div>
+      )}
     </header>
   );
 };

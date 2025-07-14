@@ -22,12 +22,17 @@ import Profile from './AutismAppPages/Profile';
 import Story from './AdultSection/components/Story';
 import Login from './AutismAppPages/Login';
 import Signup from './AutismAppPages/Signup';
+import Navbar from './AutismAppComponents/Navbar';
 
 
 function App() {
   return (
     <div>
       <Router>
+        <div>
+        <Navbar/>
+
+        </div>
         <Routes>
           <Route path='/' element={<Landing />} exact />
           <Route path='/login' element={<Login />} exact />

@@ -8,8 +8,8 @@ const { login , signup , updatePassword , updateAccountDetails , userData , upda
 userRouter.route("/login").post( login );
 userRouter.route("/signup").post( signup ) ;
 
-userRouter.route("/logout").post( logout ) ;
-userRouter.route("/refresh-token").post(refreshAccessToken)
+userRouter.route("/logout").post( verifyJWT , logout ) ;
+userRouter.route("/refresh-token").post(verifyJWT ,refreshAccessToken)
 userRouter.route("/userData").get( verifyJWT , userData ) ;
 userRouter.route("/updatePassword").patch(verifyJWT , updatePassword );
 userRouter.route("/updateAccountDetails").patch( verifyJWT , updateAccountDetails) ;
