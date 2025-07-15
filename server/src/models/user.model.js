@@ -127,5 +127,21 @@ userSchema.pre("deleteOne", async function (next) {
   next();
 });
 
+userSchema.methods.registerForEvent = function(eventId) {
+  if (!this.eventsRegistered.includes(eventId)) {
+    this.eventsRegistered.push(eventId);
+    return this.save();
+  }
+  return Promise.resolve(this);
+};
+
+userSchema.methods.isRegisteredForEvent = function(eventId) {
+  return this.eventsRegistered.includes(eventId);
+};
+
+userSchema.statics.findByEmail = function(email) {
+  return this.findOne({ email: email.toLowerCase() });
+};
+
 const User = mongoose.model("Users", userSchema);
 module.exports = { User };
