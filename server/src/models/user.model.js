@@ -58,6 +58,12 @@ const userSchema = new Schema(
       type: Boolean,
       required: true,
     },
+    eventsRegistered : [
+      {
+        type : Schema.Types.ObjectId ,
+        ref : "Event"
+      }
+    ]
   },
   { timestamps: true }
 );

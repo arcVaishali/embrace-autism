@@ -15,6 +15,18 @@ const eventSchema = new Schema(
       type: String,
       required: true,
     },
+    owner: {
+        type: Schema.Types.ObjectId ,
+        ref: "User"
+    },
+    views: {
+        type: Number,
+        default: 0
+    },
+    eventDate: {
+        type: Number,
+        required : true
+    },
   },
   { timestamp: true }
 );
