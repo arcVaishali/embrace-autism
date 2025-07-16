@@ -53,6 +53,7 @@ const ViewEvent = () => {
           setRegisteredEvents(fetchedData);
         } else {
           // check to know if fetch failed due to failed user authentication
+          // or other errors
           setErrors({
             ...errors,
             userAuth: false ,
@@ -93,7 +94,7 @@ const ViewEvent = () => {
               {!errors.userAuth ? (
                 <div>Kindly Login to view your events</div>
               ) : registeredEvents ? (
-                "There are no upcoming events"
+                "You have not registered in any event"
               ) : (
                 registeredEvents.map((val, key) => (
                   <EventCard
