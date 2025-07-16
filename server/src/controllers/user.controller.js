@@ -364,6 +364,25 @@ const logout = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, {}, "User logged Out"))
 })
 
+const getRegisteredEvents = asyncHandler( async (req , res ) => {
+  const loggedInUser = req.user ;
+  const user = await User.findById(loggedInUser._id).populate({
+    path: "eventsRegistered",
+    populate: { path: "owner", select: "username email" }
+  });
+
+  if (!user) throw new ApiError(404, "User not found");
+
+  const eventsWithFormattedDate = user.eventsRegistered.map(event => ({
+    ...event.toObject(),
+    formattedDate: event.formatDate ? event.formatDate() : ""
+  }));
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, eventsWithFormattedDate, "Registered events fetched successfully"));
+});
+
 
 module.exports = {
   login,
@@ -374,5 +393,6 @@ module.exports = {
   updateAvatar,
   updateCoverImage,
   refreshAccessToken,
-  logout
+  logout,
+  getRegisteredEvents,
 };
