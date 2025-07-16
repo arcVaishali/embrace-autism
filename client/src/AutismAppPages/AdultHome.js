@@ -1,5 +1,4 @@
 import React from 'react'
-import Navbar from '../AdultSection/components/Navbar'
 import Haze from '../AdultSection/components/Haze'
 import HazeStyle2 from '../AdultSection/components/HazeStyle2'
 import Features from '../AdultSection/Pages/Features'
@@ -8,7 +7,6 @@ import { Link } from 'react-router-dom'
 const AdultHome = () => {
   return (
     <div className="relative isolate px-6 pt-14 lg:px-8" style={{ backgroundColor: "#0d87f430" }}>
-      <Navbar />
       <Haze />
       <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-20">
         <div className="hidden sm:mb-8 sm:flex sm:justify-center">

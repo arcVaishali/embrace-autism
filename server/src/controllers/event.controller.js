@@ -7,17 +7,20 @@ const { User } = require("../models/user.model");
 
 const createEvent = asyncHandler(async (req, res) => {
   const { name, coverImage, about, eventDate } = req.body;
-  const owner = req.user ? req.user._id : req.body.owner;
+  const owner = req.user._id ;
   if (!name || !coverImage || !about || !eventDate) {
     throw new ApiError(400, "All fields are required");
   }
+
+//   coverImage upload to cloudinary pending
   const event = await Event.create({
     name,
-    coverImage,
+    // coverImage,
     about,
     eventDate,
     owner,
   });
+
   return res
     .status(201)
     .json(new ApiResponse(201, event, "Event created successfully"));
@@ -26,9 +29,13 @@ const createEvent = asyncHandler(async (req, res) => {
 
 const getAllEvents = asyncHandler(async (req, res) => {
   const events = await Event.find().populate("owner", "username email");
+ const eventsWithFormattedDate = events.map(event => ({
+  ...event.toObject(),
+  formattedDate: event.formatDate()
+}));
   return res
     .status(200)
-    .json(new ApiResponse(200, events, "Events fetched successfully"));
+    .json(new ApiResponse(200, eventsWithFormattedDate, "Events fetched successfully"));
 });
 
 

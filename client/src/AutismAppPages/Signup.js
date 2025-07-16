@@ -14,6 +14,15 @@ const Signup = () => {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  // const [formValidity, setFormValidity] = useState({
+  //   isEmailValid: false,
+  //   isPasswordValid: false,
+  //   isConfirmPasswordValid: false,
+  //   areNamesValid: false,
+  //   isPhoneNumberValid: false,
+  //   IsTermsAgreed: false,
+  //   isDOBValid: false,
+  // });
 
   useEffect(() => {
     const error = {};
@@ -39,8 +48,8 @@ const Signup = () => {
     if (touched.confirmPassword && confirmPassword.trim() !== password.trim()) {
       error.confirmPassword = "Passwords do not match.";
     }
-    if ( touched.DOB && !DOB ) {
-      error.DOB = "Date of Birth is required" ;
+    if (touched.DOB && !DOB) {
+      error.DOB = "Date of Birth is required";
     }
 
     setErrors(error);
@@ -49,7 +58,7 @@ const Signup = () => {
     const isEmailValid = email.includes("@");
     const isPasswordValid = password.length > 8;
     const isConfirmPasswordValid = password.trim() === confirmPassword.trim();
-    const isDOBValid = DOB !== "" ;
+    const isDOBValid = DOB !== "";
     const areNamesValid = firstName.trim() !== "" && lastName.trim() !== "";
     const isPhoneNumberValid = phoneNumber.length === 10;
     const IsTermsAgreed = termsAgreed === true;
@@ -63,6 +72,17 @@ const Signup = () => {
         IsTermsAgreed &&
         isDOBValid
     );
+
+    // setFormValidity({
+    //   ...formValidity,
+    //   isEmailValid: isEmailValid,
+    //   isPasswordValid: isPasswordValid,
+    //   isConfirmPasswordValid: isConfirmPasswordValid,
+    //   areNamesValid: areNamesValid,
+    //   isPhoneNumberValid: isPhoneNumberValid,
+    //   IsTermsAgreed: IsTermsAgreed,
+    //   isDOBValid: isDOBValid,
+    // });
   }, [
     firstName,
     lastName,
@@ -104,11 +124,11 @@ const Signup = () => {
         console.log(res);
         if (res.ok) setSubmitted(true);
         else {
-          const errorHtml = await res.text(); 
-          const errorMessageMatch = errorHtml.match(/<pre>(.*?)<\/pre>/s); 
+          const errorHtml = await res.text();
+          const errorMessageMatch = errorHtml.match(/<pre>(.*?)<\/pre>/s);
           const errorMessage = errorMessageMatch
             ? errorMessageMatch[1].split("<br>")[0]
-            : "An error occurred"; 
+            : "An error occurred";
           setErrors({ ...errors, submissionError: "Something went wrong" });
           console.log(errors);
           setSubmitted(false);
@@ -261,6 +281,13 @@ const Signup = () => {
             name="submitted"
             disabled={!isFormValid}
           />
+          {/* {!formValidity.IsTermsAgreed && "terms not agreed"}
+          {!formValidity.areNamesValid && "names invalid"}
+          {!formValidity.isDOBValid && "dob invalid"}
+          {!formValidity.isEmailValid && "email invalid"}
+          {!formValidity.isPasswordValid && "password invalid"}
+          {!formValidity.isConfirmPasswordValid && "confirm password invalid"}
+          {!formValidity.isPhoneNumberValid && "phone number invalid"} */}
           {errors.submissionError && (
             <div className="text-xs text-red-600">{errors.submissionError}</div>
           )}
