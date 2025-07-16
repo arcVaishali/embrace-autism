@@ -38,7 +38,19 @@ const getAllEvents = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, eventsWithFormattedDate, "Events fetched successfully"));
 });
 
+const getUpcomingEvents = asyncHandler( async (req , res ) => {
+// const events = await Event.upcomingEvents();
+  const events = await Event.upcomingEvents().sort({ eventDate: 1 }).limit(5);
 
+  const eventsWithFormattedDate = events.map(event => ({
+    ...event.toObject(),
+    formattedDate: event.formatDate()
+  }));
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, eventsWithFormattedDate, "Upcoming events fetched successfully"));
+});
 const getEventById = asyncHandler(async (req, res) => {
   const event = await Event.findById(req.params.id).populate(
     "owner",
@@ -108,4 +120,5 @@ module.exports = {
   deleteEvent,
   registerForEvent,
   unregisterFromEvent,
+  getUpcomingEvents
 };
