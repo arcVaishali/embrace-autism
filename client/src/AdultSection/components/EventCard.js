@@ -32,11 +32,11 @@ const EventCard = ({
       >
         {name}
       </h2>
-      <div className="col-span-4 grid grid-cols-6 justify-center">
-        <div className="col-span-1">{views}</div>
-        <div className="col-span-3">{eventDate ? new Date(eventDate).toLocaleDateString() : ""}</div>
-        <div className="col-span-2">{owner}</div>
+      <div className="col-span-4 grid grid-cols-4 justify-center">
+        <div className="col-span-2 text-sm text-gray-500">{views}</div>
+        <div className="col-span-2 text-sm text-gray-500">{eventDate ? new Date(eventDate).toLocaleDateString() : ""}</div>
       </div>
+      <div className="text-sm text-gray-500">{owner}</div>
       <h3
         className="mt-4 text-sm text-gray-700"
         style={{ marginBottom: "34px" }}

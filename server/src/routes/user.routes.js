@@ -3,7 +3,7 @@ const userRouter = Router() ;
 const verifyJWT  = require("../middlewares/auth.middleware");
 const {upload } = require("../middlewares/multer.middleware");
 
-const { login , signup , updatePassword , updateAccountDetails , userData , updateAvatar , updateCoverImage , logout , refreshAccessToken , getRegisteredEvents} = require("../controllers/user.controller");
+const { login , signup , updatePassword , updateAccountDetails , userData , updateAvatar , updateCoverImage , logout , refreshAccessToken , getRegisteredEvents , getCreatedEvents} = require("../controllers/user.controller");
 
 userRouter.route("/login").post( login );
 userRouter.route("/signup").post( signup ) ;
@@ -17,7 +17,8 @@ userRouter.route("/updateAvatar").patch(verifyJWT , upload.single('image') , upd
 userRouter.route("/updateCoverImage").patch(verifyJWT , upload.single('image') , updateCoverImage )
 
 
-userRouter.route("/registered-community-events").get(verifyJWT , )
+userRouter.route("/registered-community-events").get(verifyJWT , getRegisteredEvents)
+userRouter.route("/created-community-events").get(verifyJWT , getCreatedEvents)
 userRouter.route("/myStories") 
 userRouter.route("/myCampaigns")
 

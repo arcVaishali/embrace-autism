@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import ButtonPrimary from "../AutismAppComponents/ButtonPrimary";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import EventCard from "../AdultSection/components/EventCard";
 
 const Profile = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [thisUser, setThisUser] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
@@ -11,6 +13,8 @@ const Profile = () => {
   const [touch, setTouch] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [createdEvents, setCreatedEvents] = useState([]);
+  const [registeredEvents, setRegisteredEvents] = useState([]);
 
   useEffect(() => {
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -21,6 +25,7 @@ const Profile = () => {
       .then(async (res) => {
         if (res.ok) {
           const body = await res.json();
+          setIsAuthenticated(true);
 
           setThisUser((prev) => ({
             ...prev,
@@ -35,7 +40,38 @@ const Profile = () => {
           setAvatar(body.data.user.avatar);
           setCoverImage(body.data.user.coverImage);
         } else {
-          setErrors({ ...errors, userFetchError: "Please login" });
+          setErrors({ ...errors, userFetchError: "User data fetch error" });
+          setErrors({ ...errors, userAuth: "Please login" });
+        }
+      })
+      .catch((err) => console.log(err));
+
+    fetch(`${API_BASE_URL}/users/registered-community-events`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          const fetchedResponse = await res.json();
+          const fetchedData = fetchedResponse.data;
+          setRegisteredEvents(fetchedData);
+        } else {
+          setErrors({ ...errors, userAuth: "User login failed" });
+        }
+      })
+      .catch((err) => console.log(err));
+
+    fetch(`${API_BASE_URL}/users/created-community-events`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          const fetchedResponse = await res.json();
+          const fetchedData = fetchedResponse.data;
+          setCreatedEvents(fetchedData);
+        } else {
+          setErrors({ ...errors, userAuth: "User login failed" });
         }
       })
       .catch((err) => console.log(err));
@@ -269,148 +305,207 @@ const Profile = () => {
   };
 
   return (
-    <div className="grid grid-rows-2 justify-center p-10">
-      <div
-        className="grid grid-cols-12 col-span-12 justify-center p-10 bg-cover bg-center rounded-lg"
-        style={{
-          backgroundImage: `url(${
-            coverImage
-              ? coverImage
-              : "https://res.cloudinary.com/dvny8jtdq/image/upload/v1718593902/cld-sample-2.jpg"
-          })`,
-        }}
-      >
-        <div className="grid grid-cols-12 col-span-12 h-full w-full bg-black bg-opacity-30 items-center justify-center p-10">
-          <div className="col-span-3 grid justify-center">
-            {!isEditing ? (
-              <img
-                src={
-                  avatar
-                    ? avatar
-                    : "https://res.cloudinary.com/dvny8jtdq/image/upload/v1718593872/samples/bike.jpg"
-                }
-                className="w-64 h-64 rounded-full"
-              />
-            ) : (
-              <div className="grid justify-center">
-                <div className="flex-row items-center justify-center m-2">
-                  <span className="text-white">Upload Your Avatar</span>
-                  <input
-                    className=""
-                    type="file"
-                    accept="image/*"
-                    name="avatar"
-                    onChange={(e) => setAvatar(e.target.files[0])}
-                    onBlur={(e) => handleTouch("avatar")}
+    <div>
+      {isAuthenticated ? (
+        <div className="grid grid-rows-2 justify-center p-10">
+          <div
+            className="grid grid-cols-12 col-span-12 justify-center p-10 bg-cover bg-center rounded-lg"
+            style={{
+              backgroundImage: `url(${
+                coverImage
+                  ? coverImage
+                  : "https://res.cloudinary.com/dvny8jtdq/image/upload/v1718593902/cld-sample-2.jpg"
+              })`,
+            }}
+          >
+            <div className="grid grid-cols-12 col-span-12 h-full w-full bg-black bg-opacity-30 items-center justify-center p-10">
+              <div className="col-span-3 grid justify-center">
+                {!isEditing ? (
+                  <img
+                    src={
+                      avatar
+                        ? avatar
+                        : "https://res.cloudinary.com/dvny8jtdq/image/upload/v1718593872/samples/bike.jpg"
+                    }
+                    className="w-64 h-64 rounded-full"
                   />
+                ) : (
+                  <div className="grid justify-center">
+                    <div className="flex-row items-center justify-center m-2">
+                      <span className="text-white">Upload Your Avatar</span>
+                      <input
+                        className=""
+                        type="file"
+                        accept="image/*"
+                        name="avatar"
+                        onChange={(e) => setAvatar(e.target.files[0])}
+                        onBlur={(e) => handleTouch("avatar")}
+                      />
+                    </div>
+                    <div className="flex-row items-center justify-center m-2 ">
+                      <span className="text-white">
+                        Upload Your Cover Image
+                      </span>
+                      <input
+                        className=""
+                        type="file"
+                        accept="image/*"
+                        name="coverImage"
+                        onChange={(e) => setCoverImage(e.target.files[0])}
+                        onBlur={(e) => handleTouch("coverImage")}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="col-start-5 col-span-8 grid">
+                <div className="text-xs italic opacity-40 underline text-white m-2 hover:text-gray-200">
+                  {thisUser.username}
                 </div>
-                <div className="flex-row items-center justify-center m-2 ">
-                  <span className="text-white">Upload Your Cover Image</span>
-                  <input
-                    className=""
-                    type="file"
-                    accept="image/*"
-                    name="coverImage"
-                    onChange={(e) => setCoverImage(e.target.files[0])}
-                    onBlur={(e) => handleTouch("coverImage")}
-                  />
+                <span className="text-slate-50 text-6xl flex items-center m-2">
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={thisUser.firstName}
+                      onChange={(e) =>
+                        handleUpdate("firstName", e.target.value)
+                      }
+                      className="bg-gray-800 text-white rounded p-2 text-base"
+                      onBlur={(e) => handleTouch("firstName")}
+                    />
+                  ) : (
+                    thisUser.firstName
+                  )}
+                  &nbsp;
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={thisUser.lastName}
+                      onChange={(e) => handleUpdate("lastName", e.target.value)}
+                      className="bg-gray-800 text-white rounded p-2 text-base"
+                      onBlur={(e) => handleTouch("lastName")}
+                    />
+                  ) : (
+                    thisUser.lastName
+                  )}
+                  <button
+                    onClick={isEditing ? handleSubmit : handleEditToggle}
+                    className=" bg-white border-2 rounded-md p-2 ml-4 text-black hover:text-gray-800 text-base"
+                  >
+                    {!isEditing ? (
+                      <i className="fas fa-edit"> Edit </i>
+                    ) : (
+                      <span>Save</span>
+                    )}
+                  </button>
+                  {isEditing && (
+                    <button
+                      onClick={handleEditToggle}
+                      className=" bg-white border-2 rounded-md p-2 ml-4 text-black hover:text-gray-800 text-base"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </span>
+                <span className="text-slate-50 m-2">
+                  {isEditing ? (
+                    <input
+                      type="date"
+                      value={thisUser.dob}
+                      onChange={(e) => handleUpdate("dob", e.target.value)}
+                      className="bg-gray-800 text-white rounded p-2 text-base"
+                      onBlur={(e) => handleTouch("dob")}
+                    />
+                  ) : (
+                    `Happy Birthday on🎂 ${thisUser.dob}`
+                  )}
+                </span>
+                <span className="grid text-slate-50 text-xs m-2">
+                  <div className="row-span-1 text-base">About</div>
+                  {isEditing ? (
+                    <textarea
+                      value={thisUser.about}
+                      onChange={(e) => handleUpdate("about", e.target.value)}
+                      className="bg-gray-800 text-white rounded p-2 text-base"
+                      onBlur={(e) => handleTouch("about")}
+                    />
+                  ) : (
+                    thisUser.about
+                  )}
+                </span>
+                <span className="text-slate-50 text-xs m-2">
+                  Account created on: {thisUser.accountCreatedOn}
+                </span>
+                <div>
+                  <button
+                    className="m-4 p-2 col-span-4 bg-white border-2 rounded-full hover:bg-transparent hover:text-white"
+                    onClick={(e) => setShowModal(true)}
+                  >
+                    Update Password
+                  </button>
+                  {showModal && (
+                    <PasswordChangeModal
+                      show={showModal}
+                      onClose={(e) => setShowModal(false)}
+                    />
+                  )}
                 </div>
               </div>
-            )}
-          </div>
-          <div className="col-start-5 col-span-8 grid">
-            <div className="text-xs italic opacity-40 underline text-white m-2 hover:text-gray-200">
-              {thisUser.username}
             </div>
-            <span className="text-slate-50 text-6xl flex items-center m-2">
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={thisUser.firstName}
-                  onChange={(e) => handleUpdate("firstName", e.target.value)}
-                  className="bg-gray-800 text-white rounded p-2 text-base"
-                  onBlur={(e) => handleTouch("firstName")}
-                />
+          </div>
+
+          <div>
+            <div>Registered Events</div>
+            <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+              {registeredEvents ? (
+                registeredEvents.map((val, key) => (
+                  <EventCard
+                    key={key}
+                    name={val.name}
+                    about={val.about}
+                    coverImage={val.coverImage}
+                    views={val.views}
+                    eventDate={val.eventDate}
+                    owner={val.owner.username}
+                  />
+                ))
               ) : (
-                thisUser.firstName
+                <div>You have not registered in any event</div>
               )}
-              &nbsp;
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={thisUser.lastName}
-                  onChange={(e) => handleUpdate("lastName", e.target.value)}
-                  className="bg-gray-800 text-white rounded p-2 text-base"
-                  onBlur={(e) => handleTouch("lastName")}
-                />
+            </div>
+          </div>
+          
+          <div>
+            <div>Events Created</div>
+            <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+              {createdEvents ? (
+                createdEvents.map((val, key) => (
+                  <EventCard
+                    key={key}
+                    name={val.name}
+                    about={val.about}
+                    coverImage={val.coverImage}
+                    views={val.views}
+                    eventDate={val.eventDate}
+                    owner={val.owner.username}
+                  />
+                ))
               ) : (
-                thisUser.lastName
-              )}
-              <button
-                onClick={isEditing ? handleSubmit : handleEditToggle}
-                className=" bg-white border-2 rounded-md p-2 ml-4 text-black hover:text-gray-800 text-base"
-              >
-                {!isEditing ? (
-                  <i className="fas fa-edit"> Edit </i>
-                ) : (
-                  <span>Save</span>
-                )}
-              </button>
-              {isEditing && (
-                <button
-                  onClick={handleEditToggle}
-                  className=" bg-white border-2 rounded-md p-2 ml-4 text-black hover:text-gray-800 text-base"
-                >
-                  Cancel
-                </button>
-              )}
-            </span>
-            <span className="text-slate-50 m-2">
-              {isEditing ? (
-                <input
-                  type="date"
-                  value={thisUser.dob}
-                  onChange={(e) => handleUpdate("dob", e.target.value)}
-                  className="bg-gray-800 text-white rounded p-2 text-base"
-                  onBlur={(e) => handleTouch("dob")}
-                />
-              ) : (
-                `Happy Birthday on🎂 ${thisUser.dob}`
-              )}
-            </span>
-            <span className="grid text-slate-50 text-xs m-2">
-              <div className="row-span-1 text-base">About</div>
-              {isEditing ? (
-                <textarea
-                  value={thisUser.about}
-                  onChange={(e) => handleUpdate("about", e.target.value)}
-                  className="bg-gray-800 text-white rounded p-2 text-base"
-                  onBlur={(e) => handleTouch("about")}
-                />
-              ) : (
-                thisUser.about
-              )}
-            </span>
-            <span className="text-slate-50 text-xs m-2">
-              Account created on: {thisUser.accountCreatedOn}
-            </span>
-            <div>
-              <button
-                className="m-4 p-2 col-span-4 bg-white border-2 rounded-full hover:bg-transparent hover:text-white"
-                onClick={(e) => setShowModal(true)}
-              >
-                Update Password
-              </button>
-              {showModal && (
-                <PasswordChangeModal
-                  show={showModal}
-                  onClose={(e) => setShowModal(false)}
-                />
+                <div>You have not created any event</div>
               )}
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded shadow-md">
+            Please Login to view your dashboard <br />
+            <Link className="text-center underline text-blue" to="/login">
+              Please login here
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
