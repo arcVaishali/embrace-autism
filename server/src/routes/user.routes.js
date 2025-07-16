@@ -1,7 +1,7 @@
 const Router = require("express") ;
 const userRouter = Router() ;
 const verifyJWT  = require("../middlewares/auth.middleware");
-const {upload } = require("../middlewares/multer.middleware")
+const {upload } = require("../middlewares/multer.middleware");
 
 const { login , signup , updatePassword , updateAccountDetails , userData , updateAvatar , updateCoverImage , logout , refreshAccessToken } = require("../controllers/user.controller");
 
