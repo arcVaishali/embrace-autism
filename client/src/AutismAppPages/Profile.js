@@ -15,6 +15,14 @@ const Profile = () => {
   const [showModal, setShowModal] = useState(false);
   const [createdEvents, setCreatedEvents] = useState([]);
   const [registeredEvents, setRegisteredEvents] = useState([]);
+  const [fields, setFields] = useState([
+    { All: true },
+    { Events: false },
+    { Stories: false },
+    {
+      Volunteering: false,
+    },
+  ]);
 
   useEffect(() => {
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -304,10 +312,84 @@ const Profile = () => {
     );
   };
 
+  const handleFields = (field) => {
+    setFields((prev) => {
+      prev.map((val, key) => {
+        if (Object.keys(val)[0] === field) {
+          Object.values(val)[0] = false;
+        }
+        return fields;
+      });
+    });
+  };
+
+  const Events = () => {
+    return (
+      <div>
+        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+          {registeredEvents ? (
+            registeredEvents.map((val, key) => (
+              <EventCard
+                key={key}
+                name={val.name}
+                about={val.about}
+                coverImage={val.coverImage}
+                views={val.views}
+                eventDate={val.eventDate}
+                owner={val.owner.username}
+              />
+            ))
+          ) : (
+            <div>You have not registered in any event</div>
+          )}
+        </div>
+
+        <div>
+          <div>Events Created</div>
+          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+            {createdEvents ? (
+              createdEvents.map((val, key) => (
+                <EventCard
+                  key={key}
+                  name={val.name}
+                  about={val.about}
+                  coverImage={val.coverImage}
+                  views={val.views}
+                  eventDate={val.eventDate}
+                  owner={val.owner.username}
+                />
+              ))
+            ) : (
+              <div>You have not created any event</div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const Stories = () => {
+    return <div></div>;
+  };
+
+  const Volunteering = () => {
+    return <div></div>;
+  };
+
+  const All = () => {
+    return (
+      <div>
+        <Events />
+        <Stories />
+        <Volunteering />
+      </div>
+    );
+  };
+
   return (
     <div>
       {isAuthenticated ? (
-        <div className="grid grid-rows-2 justify-center p-10">
+        <div className="grid grid-rows-12 justify-center p-10">
           <div
             className="grid grid-cols-12 col-span-12 justify-center p-10 bg-cover bg-center rounded-lg"
             style={{
@@ -454,46 +536,33 @@ const Profile = () => {
             </div>
           </div>
 
-          <div>
-            <div>Registered Events</div>
-            <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-              {registeredEvents ? (
-                registeredEvents.map((val, key) => (
-                  <EventCard
+          <div className="grid grid-col-12 col-span-12 justify-center p-10">
+            {fields.map((val, key) => {
+              return (
+                <div className="col-span-6 grid grid-cols-6 justify-center gap-2">
+                  <button
+                    onClick={(e) =>
+                      e.preventDefault() && handleFields(Object.keys(val)[0])
+                    }
+                    className="col-span-2 bg-black text-white hover:bg-transparent hover:text-black p-2 text-center rounded-md"
                     key={key}
-                    name={val.name}
-                    about={val.about}
-                    coverImage={val.coverImage}
-                    views={val.views}
-                    eventDate={val.eventDate}
-                    owner={val.owner.username}
-                  />
-                ))
-              ) : (
-                <div>You have not registered in any event</div>
-              )}
-            </div>
-          </div>
-          
-          <div>
-            <div>Events Created</div>
-            <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-              {createdEvents ? (
-                createdEvents.map((val, key) => (
-                  <EventCard
-                    key={key}
-                    name={val.name}
-                    about={val.about}
-                    coverImage={val.coverImage}
-                    views={val.views}
-                    eventDate={val.eventDate}
-                    owner={val.owner.username}
-                  />
-                ))
-              ) : (
-                <div>You have not created any event</div>
-              )}
-            </div>
+                  >
+                    {Object.keys(val)[0]}
+                  </button>
+                  {Object.keys(val)[0] === "Events" && Object.values(val)[0] ? (
+                    <Events />
+                  ) : Object.keys(val)[0] === "Stories" &&
+                    Object.values(val)[0] ? (
+                    <Stories />
+                  ) : Object.keys(val)[0] === "Volunteering" &&
+                    Object.values(val)[0] ? (
+                    <Volunteering />
+                  ) : (
+                    <All />
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       ) : (
