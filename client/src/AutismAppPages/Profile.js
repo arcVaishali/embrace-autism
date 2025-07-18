@@ -325,7 +325,7 @@ const Profile = () => {
 
   const Events = () => {
     return (
-      <div>
+      <div className="grid grid-col-12 col-span-12 justify-center p-10">
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
           {registeredEvents ? (
             registeredEvents.map((val, key) => (
@@ -344,25 +344,23 @@ const Profile = () => {
           )}
         </div>
 
-        <div>
+        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
           <div>Events Created</div>
-          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-            {createdEvents ? (
-              createdEvents.map((val, key) => (
-                <EventCard
-                  key={key}
-                  name={val.name}
-                  about={val.about}
-                  coverImage={val.coverImage}
-                  views={val.views}
-                  eventDate={val.eventDate}
-                  owner={val.owner.username}
-                />
-              ))
-            ) : (
-              <div>You have not created any event</div>
-            )}
-          </div>
+          {createdEvents ? (
+            createdEvents.map((val, key) => (
+              <EventCard
+                key={key}
+                name={val.name}
+                about={val.about}
+                coverImage={val.coverImage}
+                views={val.views}
+                eventDate={val.eventDate}
+                owner={val.owner.username}
+              />
+            ))
+          ) : (
+            <div>You have not created any event</div>
+          )}
         </div>
       </div>
     );
