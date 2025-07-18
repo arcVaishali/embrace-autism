@@ -16,7 +16,7 @@ const Profile = () => {
   const [createdEvents, setCreatedEvents] = useState([]);
   const [registeredEvents, setRegisteredEvents] = useState([]);
   const [fields, setFields] = useState([
-    { All: true },
+    { All: false },
     { Events: false },
     { Stories: false },
     {
@@ -316,6 +316,8 @@ const Profile = () => {
     setFields((prev) => {
       prev.map((val, key) => {
         if (Object.keys(val)[0] === field) {
+          Object.values(val)[0] = true;
+        } else {
           Object.values(val)[0] = false;
         }
         return fields;
@@ -534,10 +536,10 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="grid grid-col-12 col-span-12 justify-center p-10">
-            {fields.map((val, key) => {
-              return (
-                <div className="col-span-6 grid grid-cols-6 justify-center gap-2">
+          <div className="grid grid-cols-12 col-span-12 justify-center p-10">
+            <div className="grid grid-cols-6 col-span-6 justify-center gap-2">
+              {fields.map((val, key) => {
+                return (
                   <button
                     onClick={(e) =>
                       e.preventDefault() && handleFields(Object.keys(val)[0])
@@ -547,20 +549,24 @@ const Profile = () => {
                   >
                     {Object.keys(val)[0]}
                   </button>
-                  {Object.keys(val)[0] === "Events" && Object.values(val)[0] ? (
-                    <Events />
-                  ) : Object.keys(val)[0] === "Stories" &&
-                    Object.values(val)[0] ? (
-                    <Stories />
-                  ) : Object.keys(val)[0] === "Volunteering" &&
-                    Object.values(val)[0] ? (
-                    <Volunteering />
-                  ) : (
-                    <All />
-                  )}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+          </div>
+          <div className="grid grid-cols-12 col-span-12 justify-center p-10">
+            <div className="col-span-12 grid grid-cols-6 justify-center gap-2">
+              {fields.map((val, key) =>
+                val.Events ? (
+                  <Events />
+                ) : val.Stories ? (
+                  <Stories />
+                ) : val.Volunteering ? (
+                  <Volunteering />
+                ) : (
+                  <All />
+                )
+              )}
+            </div>
           </div>
         </div>
       ) : (
