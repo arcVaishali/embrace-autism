@@ -13,6 +13,8 @@ const Profile = () => {
   const [touch, setTouch] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showRegisteredEvents, setShowRegisteredEvents] = useState(true);
+  const [showCreatedEvents, setShowCreatedEvents] = useState(true);
   const [createdEvents, setCreatedEvents] = useState([]);
   const [registeredEvents, setRegisteredEvents] = useState([]);
   const [selectedField, setSelectedField] = useState("All");
@@ -306,152 +308,82 @@ const Profile = () => {
   };
 
 
-  const [activeTab, setActiveTab] = useState("events");
-  const [eventFilter, setEventFilter] = useState("registered");
-  const [storyFilter, setStoryFilter] = useState("created");
-  const [volunteeringFilter, setVolunteeringFilter] = useState("created");
+  const Events = () => (
+    <div className="grid grid-cols-12 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+      <div className="col-span-12 flex justify-center gap-4 p-4 overflow-x-auto">
+            {[ "All" , "Registered Events" , "Created Events"].map((field) => (
+              <button
+                key={field}
+                onClick={() => setSelectedField(field)}
+                className={`px-6 py-2 rounded-md whitespace-nowrap ${
+                  selectedField === field
+                    ? "bg-black text-white"
+                    : "bg-white border"
+                }`}
+              >
+                {field}
+              </button>
+            ))}
+          </div>
 
-  const renderEventContent = () => {
-    return (
-      <div>
-        <div className="flex space-x-4 mb-4">
-          {['registered', 'created', 'viewed'].map(type => (
-            <button
-              key={type}
-              onClick={() => setEventFilter(type)}
-              className={`px-4 py-2 rounded-full text-sm font-medium shadow ${eventFilter === type ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
-            >
-              {type.charAt(0).toUpperCase() + type.slice(1)} Events
-            </button>
-          ))}
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          <EventCard filter={eventFilter} />
-          <EventCard filter={eventFilter} />
-          <EventCard filter={eventFilter} />
-        </div>
-      </div>
-    );
-  };
-
-  const renderStoryContent = () => {
-    return (
-      <div>
-        <div className="flex space-x-4 mb-4">
-          {['created', 'interacted'].map(type => (
-            <button
-              key={type}
-              onClick={() => setStoryFilter(type)}
-              className={`px-4 py-2 rounded-full text-sm font-medium shadow ${storyFilter === type ? 'bg-green-600 text-white' : 'bg-gray-200'}`}
-            >
-              {type === 'created' ? 'Created' : 'Liked/Commented'} Stories
-            </button>
-          ))}
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {/* <StoryCard filter={storyFilter} />
-          <StoryCard filter={storyFilter} />
-          <StoryCard filter={storyFilter} /> */}
-        </div>
-      </div>
-    );
-  };
-
-  const renderVolunteeringContent = () => {
-    return (
-      <div>
-        <div className="flex space-x-4 mb-4 overflow-x-auto">
-          {['created', 'attended', 'registered', 'commented'].map(type => (
-            <button
-              key={type}
-              onClick={() => setVolunteeringFilter(type)}
-              className={`px-4 py-2 rounded-full text-sm font-medium shadow ${volunteeringFilter === type ? 'bg-purple-600 text-white' : 'bg-gray-200'}`}
-            >
-              {type.charAt(0).toUpperCase() + type.slice(1)} Drives
-            </button>
-          ))}
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {/* <VolunteeringCard filter={volunteeringFilter} />
-          <VolunteeringCard filter={volunteeringFilter} />
-          <VolunteeringCard filter={volunteeringFilter} /> */}
-        </div>
-      </div>
-    );
-  };
-
-  const rendering = () => {
-    return (
-    <div className="p-4">
-      <div className="flex space-x-6 overflow-x-auto mb-6">
-        <button
-          className={`text-lg font-semibold ${activeTab === "events" ? "text-blue-600" : "text-gray-600"}`}
-          onClick={() => setActiveTab("events")}
-        >
-          Events
-        </button>
-        <button
-          className={`text-lg font-semibold ${activeTab === "stories" ? "text-green-600" : "text-gray-600"}`}
-          onClick={() => setActiveTab("stories")}
-        >
-          Stories
-        </button>
-        <button
-          className={`text-lg font-semibold ${activeTab === "volunteering" ? "text-purple-600" : "text-gray-600"}`}
-          onClick={() => setActiveTab("volunteering")}
-        >
-          Volunteering
-        </button>
-      </div>
-
-      {activeTab === "events" && renderEventContent()}
-      {activeTab === "stories" && renderStoryContent()}
-      {activeTab === "volunteering" && renderVolunteeringContent()}
-    </div>
-  );
-}
-
- const Events = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-      {registeredEvents.length ? (
-        registeredEvents.map((event, index) => (
-          <EventCard key={index} {...event} owner={event.owner.username} />
-        ))
+          <div className="col-span-12 p-4">{renderSection()}</div>
+      {showRegisteredEvents ? (
+        registeredEvents.length ? (
+          registeredEvents.map((event, index) => (
+            <EventCard key={index} {...event} owner={event.owner.username} />
+          ))
+        ) : (
+          <p className="col-span-full text-sm text-gray-600">
+            No registered events found.
+          </p>
+        )
       ) : (
-        <p className="col-span-full text-sm text-gray-600">No registered events found.</p>
+        <></>
       )}
-      {createdEvents.length ? (
-        createdEvents.map((event, index) => (
-          <EventCard key={index} {...event} owner={event.owner.username} />
-        ))
+      {showCreatedEvents ? (
+        createdEvents.length ? (
+          createdEvents.map((event, index) => (
+            <EventCard key={index} {...event} owner={event.owner.username} />
+          ))
+        ) : (
+          <p className="col-span-full text-sm text-gray-600">
+            No created events found.
+          </p>
+        )
       ) : (
-        <p className="col-span-full text-sm text-gray-600">No created events found.</p>
+        <></>
       )}
     </div>
   );
 
   const Stories = () => <div className="p-4">Stories section coming soon.</div>;
-  const Volunteering = () => <div className="p-4">Volunteering section coming soon.</div>;
+  const Volunteering = () => (
+    <div className="p-4">Volunteering section coming soon.</div>
+  );
 
   const renderSection = () => {
     switch (selectedField) {
-      case "Events": return <Events />;
-      case "Stories": return <Stories />;
-      case "Volunteering": return <Volunteering />;
-      default: return (
-        <>
-          <Events />
-          <Stories />
-          <Volunteering />
-        </>
-      );
+      case "Events":
+        return <Events />;
+      case "Stories":
+        return <Stories />;
+      case "Volunteering":
+        return <Volunteering />;
+      default:
+        return (
+          <>
+            <Events />
+            <Stories />
+            <Volunteering />
+          </>
+        );
     }
   };
 
   return (
-    <div>
+    <div className="grid grid-rows-12 justify-center p-10">
       {isAuthenticated ? (
-        <div className="min-h-screen bg-gray-100">
+        <div className="grid grid-rows-12 justify-center p-10">
           <div
             className="grid grid-cols-12 col-span-12 justify-center p-10 bg-cover bg-center rounded-lg"
             style={{
@@ -598,19 +530,23 @@ const Profile = () => {
             </div>
           </div>
 
-         <div className="flex justify-center gap-4 p-4 overflow-x-auto">
+          <div className="col-span-12 flex justify-center gap-4 p-4 overflow-x-auto">
             {["All", "Events", "Stories", "Volunteering"].map((field) => (
               <button
                 key={field}
                 onClick={() => setSelectedField(field)}
-                className={`px-6 py-2 rounded-md whitespace-nowrap ${selectedField === field ? "bg-black text-white" : "bg-white border"}`}
+                className={`px-6 py-2 rounded-md whitespace-nowrap ${
+                  selectedField === field
+                    ? "bg-black text-white"
+                    : "bg-white border"
+                }`}
               >
                 {field}
               </button>
             ))}
           </div>
 
-          <div className="p-4">{renderSection()}</div>
+          <div className="col-span-12 p-4">{renderSection()}</div>
         </div>
       ) : (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
