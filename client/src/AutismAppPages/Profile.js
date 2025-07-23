@@ -78,7 +78,7 @@ const Profile = () => {
         }
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [API_BASE_URL]);
 
   useEffect(() => {
     const error = {};
