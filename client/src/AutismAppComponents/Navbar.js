@@ -7,6 +7,7 @@ const Navbar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [errors, setErrors] = useState({});
   const [showDropdownMenu, setShowDropdownMenu] = useState(false);
+  const [userType, setUserType] = useState(null);
 
   const navigate = useNavigate();
 
@@ -19,6 +20,7 @@ const Navbar = () => {
       .then(async (res) => {
         if (res.ok) {
           const body = await res.json();
+          setUserType(body.data.user.userType);
           setThisUser(body.data.user.username);
           setIsAuthenticated(true);
         } else {
@@ -103,18 +105,51 @@ const Navbar = () => {
           >
             About Us
           </Link>
-          <Link
-            to="/child"
-            className="text-sm font-semibold leading-6 text-gray-900"
-          >
-            Child
-          </Link>
-          <Link
-            to="/adult"
-            className="text-sm font-semibold leading-6 text-gray-900"
-          >
-            Adult
-          </Link>
+          {!isAuthenticated ? (
+            <div className="flex gap-x-6">
+              <Link
+                to="/child"
+                className="col-span-3 text-sm font-semibold leading-6 text-gray-900"
+              >
+                Child
+              </Link>
+              <Link
+                to="/adult"
+                className="col-span-3 text-sm font-semibold leading-6 text-gray-900"
+              >
+                Adult
+              </Link>
+            </div>
+          ) : userType === "Adult" ? (
+            <div className="flex gap-x-6">
+              <Link
+                to="/adult/Features"
+                className="text-sm font-semibold leading-6 text-gray-900"
+              >
+                Features
+              </Link>
+              <Link
+                to="/adult/ViewEvent"
+                className="text-sm font-semibold leading-6 text-gray-900"
+              >
+                Community Events
+              </Link>
+              <Link
+                to="/adult/Volunteer"
+                className="text-sm font-semibold leading-6 text-gray-900"
+              >
+                Volunteer
+              </Link>
+              <Link
+                to="/adult/ShareStories"
+                className="text-sm font-semibold leading-6 text-gray-900"
+              >
+                Share Stories
+              </Link>
+            </div>
+          ) : (
+            <div></div>
+          )}
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {isAuthenticated ? (

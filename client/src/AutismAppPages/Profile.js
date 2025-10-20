@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import ButtonPrimary from "../AutismAppComponents/ButtonPrimary";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import EventCard from "../AdultSection/components/EventCard";
 
 const Profile = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [thisUser, setThisUser] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
@@ -11,6 +13,11 @@ const Profile = () => {
   const [touch, setTouch] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showRegisteredEvents, setShowRegisteredEvents] = useState(true);
+  const [showCreatedEvents, setShowCreatedEvents] = useState(true);
+  const [createdEvents, setCreatedEvents] = useState([]);
+  const [registeredEvents, setRegisteredEvents] = useState([]);
+  const [selectedField, setSelectedField] = useState("All");
 
   useEffect(() => {
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -21,6 +28,7 @@ const Profile = () => {
       .then(async (res) => {
         if (res.ok) {
           const body = await res.json();
+          setIsAuthenticated(true);
 
           setThisUser((prev) => ({
             ...prev,
@@ -35,7 +43,38 @@ const Profile = () => {
           setAvatar(body.data.user.avatar);
           setCoverImage(body.data.user.coverImage);
         } else {
-          setErrors({ ...errors, userFetchError: "Please login" });
+          setErrors({ ...errors, userFetchError: "User data fetch error" });
+          setErrors({ ...errors, userAuth: "Please login" });
+        }
+      })
+      .catch((err) => console.log(err));
+
+    fetch(`${API_BASE_URL}/users/registered-community-events`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          const fetchedResponse = await res.json();
+          const fetchedData = fetchedResponse.data;
+          setRegisteredEvents(fetchedData);
+        } else {
+          setErrors({ ...errors, userAuth: "User login failed" });
+        }
+      })
+      .catch((err) => console.log(err));
+
+    fetch(`${API_BASE_URL}/users/created-community-events`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          const fetchedResponse = await res.json();
+          const fetchedData = fetchedResponse.data;
+          setCreatedEvents(fetchedData);
+        } else {
+          setErrors({ ...errors, userAuth: "User login failed" });
         }
       })
       .catch((err) => console.log(err));
@@ -268,149 +307,257 @@ const Profile = () => {
     );
   };
 
+
+  const Events = () => (
+    <div className="grid grid-cols-12 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+      <div className="col-span-12 flex justify-center gap-4 p-4 overflow-x-auto">
+            {[ "All" , "Registered Events" , "Created Events"].map((field) => (
+              <button
+                key={field}
+                onClick={() => setSelectedField(field)}
+                className={`px-6 py-2 rounded-md whitespace-nowrap ${
+                  selectedField === field
+                    ? "bg-black text-white"
+                    : "bg-white border"
+                }`}
+              >
+                {field}
+              </button>
+            ))}
+          </div>
+
+          <div className="col-span-12 p-4">{renderSection()}</div>
+      {showRegisteredEvents ? (
+        registeredEvents.length ? (
+          registeredEvents.map((event, index) => (
+            <EventCard key={index} {...event} owner={event.owner.username} />
+          ))
+        ) : (
+          <p className="col-span-full text-sm text-gray-600">
+            No registered events found.
+          </p>
+        )
+      ) : (
+        <></>
+      )}
+      {showCreatedEvents ? (
+        createdEvents.length ? (
+          createdEvents.map((event, index) => (
+            <EventCard key={index} {...event} owner={event.owner.username} />
+          ))
+        ) : (
+          <p className="col-span-full text-sm text-gray-600">
+            No created events found.
+          </p>
+        )
+      ) : (
+        <></>
+      )}
+    </div>
+  );
+
+  const Stories = () => <div className="p-4">Stories section coming soon.</div>;
+  const Volunteering = () => (
+    <div className="p-4">Volunteering section coming soon.</div>
+  );
+
+  const renderSection = () => {
+    switch (selectedField) {
+      case "Events":
+        return <Events />;
+      case "Stories":
+        return <Stories />;
+      case "Volunteering":
+        return <Volunteering />;
+      default:
+        return (
+          <>
+            <Events />
+            <Stories />
+            <Volunteering />
+          </>
+        );
+    }
+  };
+
   return (
-    <div className="grid grid-rows-2 justify-center p-10">
-      <div
-        className="grid grid-cols-12 col-span-12 justify-center p-10 bg-cover bg-center rounded-lg"
-        style={{
-          backgroundImage: `url(${
-            coverImage
-              ? coverImage
-              : "https://res.cloudinary.com/dvny8jtdq/image/upload/v1718593902/cld-sample-2.jpg"
-          })`,
-        }}
-      >
-        <div className="grid grid-cols-12 col-span-12 h-full w-full bg-black bg-opacity-30 items-center justify-center p-10">
-          <div className="col-span-3 grid justify-center">
-            {!isEditing ? (
-              <img
-                src={
-                  avatar
-                    ? avatar
-                    : "https://res.cloudinary.com/dvny8jtdq/image/upload/v1718593872/samples/bike.jpg"
-                }
-                className="w-64 h-64 rounded-full"
-              />
-            ) : (
-              <div className="grid justify-center">
-                <div className="flex-row items-center justify-center m-2">
-                  <span className="text-white">Upload Your Avatar</span>
-                  <input
-                    className=""
-                    type="file"
-                    accept="image/*"
-                    name="avatar"
-                    onChange={(e) => setAvatar(e.target.files[0])}
-                    onBlur={(e) => handleTouch("avatar")}
+    <div className="grid grid-rows-12 justify-center p-10">
+      {isAuthenticated ? (
+        <div className="grid grid-rows-12 justify-center p-10">
+          <div
+            className="grid grid-cols-12 col-span-12 justify-center p-10 bg-cover bg-center rounded-lg"
+            style={{
+              backgroundImage: `url(${
+                coverImage
+                  ? coverImage
+                  : "https://res.cloudinary.com/dvny8jtdq/image/upload/v1718593902/cld-sample-2.jpg"
+              })`,
+            }}
+          >
+            <div className="grid grid-cols-12 col-span-12 h-full w-full bg-black bg-opacity-30 items-center justify-center p-10">
+              <div className="col-span-3 grid justify-center">
+                {!isEditing ? (
+                  <img
+                    src={
+                      avatar
+                        ? avatar
+                        : "https://res.cloudinary.com/dvny8jtdq/image/upload/v1718593872/samples/bike.jpg"
+                    }
+                    className="w-64 h-64 rounded-full"
                   />
+                ) : (
+                  <div className="grid justify-center">
+                    <div className="flex-row items-center justify-center m-2">
+                      <span className="text-white">Upload Your Avatar</span>
+                      <input
+                        className=""
+                        type="file"
+                        accept="image/*"
+                        name="avatar"
+                        onChange={(e) => setAvatar(e.target.files[0])}
+                        onBlur={(e) => handleTouch("avatar")}
+                      />
+                    </div>
+                    <div className="flex-row items-center justify-center m-2 ">
+                      <span className="text-white">
+                        Upload Your Cover Image
+                      </span>
+                      <input
+                        className=""
+                        type="file"
+                        accept="image/*"
+                        name="coverImage"
+                        onChange={(e) => setCoverImage(e.target.files[0])}
+                        onBlur={(e) => handleTouch("coverImage")}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="col-start-5 col-span-8 grid">
+                <div className="text-xs italic opacity-40 underline text-white m-2 hover:text-gray-200">
+                  {thisUser.username}
                 </div>
-                <div className="flex-row items-center justify-center m-2 ">
-                  <span className="text-white">Upload Your Cover Image</span>
-                  <input
-                    className=""
-                    type="file"
-                    accept="image/*"
-                    name="coverImage"
-                    onChange={(e) => setCoverImage(e.target.files[0])}
-                    onBlur={(e) => handleTouch("coverImage")}
-                  />
+                <span className="text-slate-50 text-6xl flex items-center m-2">
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={thisUser.firstName}
+                      onChange={(e) =>
+                        handleUpdate("firstName", e.target.value)
+                      }
+                      className="bg-gray-800 text-white rounded p-2 text-base"
+                      onBlur={(e) => handleTouch("firstName")}
+                    />
+                  ) : (
+                    thisUser.firstName
+                  )}
+                  &nbsp;
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={thisUser.lastName}
+                      onChange={(e) => handleUpdate("lastName", e.target.value)}
+                      className="bg-gray-800 text-white rounded p-2 text-base"
+                      onBlur={(e) => handleTouch("lastName")}
+                    />
+                  ) : (
+                    thisUser.lastName
+                  )}
+                  <button
+                    onClick={isEditing ? handleSubmit : handleEditToggle}
+                    className=" bg-white border-2 rounded-md p-2 ml-4 text-black hover:text-gray-800 text-base"
+                  >
+                    {!isEditing ? (
+                      <i className="fas fa-edit"> Edit </i>
+                    ) : (
+                      <span>Save</span>
+                    )}
+                  </button>
+                  {isEditing && (
+                    <button
+                      onClick={handleEditToggle}
+                      className=" bg-white border-2 rounded-md p-2 ml-4 text-black hover:text-gray-800 text-base"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </span>
+                <span className="text-slate-50 m-2">
+                  {isEditing ? (
+                    <input
+                      type="date"
+                      value={thisUser.dob}
+                      onChange={(e) => handleUpdate("dob", e.target.value)}
+                      className="bg-gray-800 text-white rounded p-2 text-base"
+                      onBlur={(e) => handleTouch("dob")}
+                    />
+                  ) : (
+                    `Happy Birthday on🎂 ${thisUser.dob}`
+                  )}
+                </span>
+                <span className="grid text-slate-50 text-xs m-2">
+                  <div className="row-span-1 text-base">About</div>
+                  {isEditing ? (
+                    <textarea
+                      value={thisUser.about}
+                      onChange={(e) => handleUpdate("about", e.target.value)}
+                      className="bg-gray-800 text-white rounded p-2 text-base"
+                      onBlur={(e) => handleTouch("about")}
+                    />
+                  ) : (
+                    thisUser.about
+                  )}
+                </span>
+                <span className="text-slate-50 text-xs m-2">
+                  Account created on: {thisUser.accountCreatedOn}
+                </span>
+                <div>
+                  <button
+                    className="m-4 p-2 col-span-4 bg-white border-2 rounded-full hover:bg-transparent hover:text-white"
+                    onClick={(e) => setShowModal(true)}
+                  >
+                    Update Password
+                  </button>
+                  {showModal && (
+                    <PasswordChangeModal
+                      show={showModal}
+                      onClose={(e) => setShowModal(false)}
+                    />
+                  )}
                 </div>
               </div>
-            )}
+            </div>
           </div>
-          <div className="col-start-5 col-span-8 grid">
-            <div className="text-xs italic opacity-40 underline text-white m-2 hover:text-gray-200">
-              {thisUser.username}
-            </div>
-            <span className="text-slate-50 text-6xl flex items-center m-2">
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={thisUser.firstName}
-                  onChange={(e) => handleUpdate("firstName", e.target.value)}
-                  className="bg-gray-800 text-white rounded p-2 text-base"
-                  onBlur={(e) => handleTouch("firstName")}
-                />
-              ) : (
-                thisUser.firstName
-              )}
-              &nbsp;
-              {isEditing ? (
-                <input
-                  type="text"
-                  value={thisUser.lastName}
-                  onChange={(e) => handleUpdate("lastName", e.target.value)}
-                  className="bg-gray-800 text-white rounded p-2 text-base"
-                  onBlur={(e) => handleTouch("lastName")}
-                />
-              ) : (
-                thisUser.lastName
-              )}
+
+          <div className="col-span-12 flex justify-center gap-4 p-4 overflow-x-auto">
+            {["All", "Events", "Stories", "Volunteering"].map((field) => (
               <button
-                onClick={isEditing ? handleSubmit : handleEditToggle}
-                className=" bg-white border-2 rounded-md p-2 ml-4 text-black hover:text-gray-800 text-base"
+                key={field}
+                onClick={() => setSelectedField(field)}
+                className={`px-6 py-2 rounded-md whitespace-nowrap ${
+                  selectedField === field
+                    ? "bg-black text-white"
+                    : "bg-white border"
+                }`}
               >
-                {!isEditing ? (
-                  <i className="fas fa-edit"> Edit </i>
-                ) : (
-                  <span>Save</span>
-                )}
+                {field}
               </button>
-              {isEditing && (
-                <button
-                  onClick={handleEditToggle}
-                  className=" bg-white border-2 rounded-md p-2 ml-4 text-black hover:text-gray-800 text-base"
-                >
-                  Cancel
-                </button>
-              )}
-            </span>
-            <span className="text-slate-50 m-2">
-              {isEditing ? (
-                <input
-                  type="date"
-                  value={thisUser.dob}
-                  onChange={(e) => handleUpdate("dob", e.target.value)}
-                  className="bg-gray-800 text-white rounded p-2 text-base"
-                  onBlur={(e) => handleTouch("dob")}
-                />
-              ) : (
-                `Happy Birthday on🎂 ${thisUser.dob}`
-              )}
-            </span>
-            <span className="grid text-slate-50 text-xs m-2">
-              <div className="row-span-1 text-base">About</div>
-              {isEditing ? (
-                <textarea
-                  value={thisUser.about}
-                  onChange={(e) => handleUpdate("about", e.target.value)}
-                  className="bg-gray-800 text-white rounded p-2 text-base"
-                  onBlur={(e) => handleTouch("about")}
-                />
-              ) : (
-                thisUser.about
-              )}
-            </span>
-            <span className="text-slate-50 text-xs m-2">
-              Account created on: {thisUser.accountCreatedOn}
-            </span>
-            <div>
-              <button
-                className="m-4 p-2 col-span-4 bg-white border-2 rounded-full hover:bg-transparent hover:text-white"
-                onClick={(e) => setShowModal(true)}
-              >
-                Update Password
-              </button>
-              {showModal && (
-                <PasswordChangeModal
-                  show={showModal}
-                  onClose={(e) => setShowModal(false)}
-                />
-              )}
-            </div>
+            ))}
+          </div>
+
+          <div className="col-span-12 p-4">{renderSection()}</div>
+        </div>
+      ) : (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded shadow-md">
+            Please Login to view your dashboard <br />
+            <Link className="text-center underline text-blue" to="/login">
+              Please login here
+            </Link>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
