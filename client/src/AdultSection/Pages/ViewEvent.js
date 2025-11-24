@@ -73,7 +73,7 @@ const ViewEvent = () => {
           Upcoming events
           <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
             <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-              {upcomingEvents
+              {upcomingEvents.length === 0
                 ? "There are no upcoming events"
                 : upcomingEvents.map((val, key) => (
                     <EventCard
@@ -83,7 +83,7 @@ const ViewEvent = () => {
                       coverImage={val.coverImage}
                       views={val.views}
                       eventDate={val.eventDate}
-                      owner={val.owner.username}
+                      owner={val.owner?.username || "Unknown"}
                     ></EventCard>
                   ))}
             </div>
@@ -91,9 +91,9 @@ const ViewEvent = () => {
           Registered Events
           <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
             <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-              {!errors.userAuth ? (
+              {errors.userAuth === false ? (
                 <div>Kindly Login to view your events</div>
-              ) : registeredEvents ? (
+              ) : registeredEvents.length === 0 ? (
                 "You have not registered in any event"
               ) : (
                 registeredEvents.map((val, key) => (
@@ -104,7 +104,7 @@ const ViewEvent = () => {
                     coverImage={val.coverImage}
                     views={val.views}
                     eventDate={val.eventDate}
-                    owner={val.owner.username}
+                    owner={val.owner?.username || "Unknown"}
                   ></EventCard>
                 ))
               )}
@@ -120,7 +120,7 @@ const ViewEvent = () => {
                   coverImage={val.coverImage}
                   views={val.views}
                   eventDate={val.eventDate}
-                  owner={val.owner.username}
+                  owner={val.owner?.username || "Unknown"}
                 ></EventCard>
               ))}
             </div>
