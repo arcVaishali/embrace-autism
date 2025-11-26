@@ -9,7 +9,9 @@ userRouter.route("/login").post( login );
 userRouter.route("/signup").post( signup ) ;
 
 userRouter.route("/logout").post( verifyJWT , logout ) ;
-userRouter.route("/refresh-token").post(verifyJWT ,refreshAccessToken)
+// refresh-token should not require a valid accessToken because the purpose of
+// this endpoint is to exchange an existing refresh token for a new access token
+userRouter.route("/refresh-token").post(refreshAccessToken)
 userRouter.route("/userData").get( verifyJWT , userData ) ;
 userRouter.route("/updatePassword").patch(verifyJWT , updatePassword );
 userRouter.route("/updateAccountDetails").patch( verifyJWT , updateAccountDetails) ;

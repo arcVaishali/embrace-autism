@@ -14,8 +14,10 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    // store phone numbers as strings to keep formatting flexible and avoid
+    // coercion problems when validating on the controller side
     phoneNumber: {
-      type: Number,
+      type: String,
       required: true,
     },
     firstName: {
@@ -40,9 +42,10 @@ const userSchema = new Schema(
       type : String,
       default : "Hey! I am new @EmbraceAutism"
     },
+    // `enum` (not `enums`) is the correct mongoose option
     userType: {
       type: String,
-      enums: ["Adult", "Child"],
+      enum: ["Adult", "Child"],
     },
     coverImage: {
       type: String,
@@ -140,23 +143,28 @@ userSchema.pre("deleteOne", async function (next) {
   next();
 });
 
-userSchema.methods.registerForEvent = function(eventId) {
-  if (!this.eventsRegistered.includes(eventId)) {
+userSchema.methods.registerForEvent = function (eventId) {
+  const exists = this.eventsRegistered.some(
+    (eid) => eid.toString() === eventId.toString()
+  );
+  if (!exists) {
     this.eventsRegistered.push(eventId);
     return this.save();
   }
   return Promise.resolve(this);
 };
 
-userSchema.methods.unregisterFromEvent = function(eventId) {
+userSchema.methods.unregisterFromEvent = function (eventId) {
   this.eventsRegistered = this.eventsRegistered.filter(
-    eid => eid.toString() !== eventId.toString()
+    (eid) => eid.toString() !== eventId.toString()
   );
   return this.save();
 };
 
-userSchema.methods.isRegisteredForEvent = function(eventId) {
-  return this.eventsRegistered.includes(eventId);
+userSchema.methods.isRegisteredForEvent = function (eventId) {
+  return this.eventsRegistered.some(
+    (eid) => eid.toString() === eventId.toString()
+  );
 };
 
 userSchema.methods.fullName = function() {
