@@ -45,7 +45,7 @@ const ChildHome = () => {
             <div>
               <Link to="/games">
                 <motion.div
-                  className="flex items-center bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-full hover:bg-blue-600 text-red-500 font-semibold py-2 px-4 rounded-full text-lg transition-all duration-300"
+                  className="flex items-center bg-purple-500 hover:bg-purple-600 text-white  hover:bg-blue-600 font-semibold py-2 px-4 rounded-full text-lg transition-all duration-300"
                   variants={buttonVariants}
                   style={{marginBottom:"15px"}}
                   initial="initial"

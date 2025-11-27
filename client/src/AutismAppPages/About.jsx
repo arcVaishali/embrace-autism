@@ -18,12 +18,12 @@ const About = () => {
       <div style={{ padding: "30px", margin: "34px" }}>
         <div className="text">
           <span className="text-white border-b-2 border-[#0D79F4] uppercase">About us</span>
-          <h2 className="my-4 font-bold text-3xl text-white sm:text-4xl text-4xl font-bold tracking-tight text-white sm:text-6xl ">Embrace <span className="text-[#0D79F4]">Autism</span>
+          <h2 className="my-4 font-bold text-white sm:text-4xl text-4xl tracking-tight">Embrace <span className="text-[#0D79F4]">Autism</span>
           </h2>
             <div class="mx-auto max-w-2xl lg:mx-0">
               {/* <p class="lg:gap-x-10 lg:space-y-0 mt-6 text-lg leading-8 text-gray-300">Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat fugiat aliqua.</p> */}
             </div>
-          <p className="mx-auto max-w-5xl lg:mx-0 text-white mt-6 text-lg leading-8 text-gray-300">
+          <p className="mx-auto max-w-5xl lg:mx-0 mt-6 text-lg leading-8 text-gray-300">
             <div>
               Autism, a beautifully diverse neurodevelopmental condition, has enriched the tapestry of human experience in countless ways. It gifts individuals with unique perspectives, unparalleled talents, and an extraordinary capacity for empathy. However, navigating the world with autism can present its own set of challenges, both for individuals on the spectrum and their families.
 
