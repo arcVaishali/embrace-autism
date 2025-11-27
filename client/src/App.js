@@ -1,5 +1,5 @@
 import './App.css';
-import react from '@heroicons/react';
+// removed unused import
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Landing from "./AutismAppPages/AustismAppLanding";
 import AdultHome from "./AutismAppPages/AdultHome";
@@ -13,6 +13,9 @@ import Puzzles from './ChildSection/Puzzles';
 import Games from './ChildSection/Games';
 import VolunteerForm from './AdultSection/Pages/VolunteerForm'
 import ViewEvent from './AdultSection/Pages/ViewEvent';
+import CreateEvent from './AdultSection/Pages/CreateEvent';
+import DeleteEvent from './AdultSection/Pages/DeleteEvent';
+import EventDetails from './AdultSection/Pages/EventDetails';
 import CourseCompletion from './ChildSection/CourseCompletion';
 
 import About from './AutismAppPages/About';
@@ -30,10 +33,11 @@ function App() {
     <div>
       <Router>
         <div>
-        <Navbar/>
-
+          <Navbar/>
         </div>
-        <Routes>
+        {/* main page content needs top padding to avoid being covered by fixed navbar */}
+        <main className="pt-28">
+          <Routes>
           <Route path='/' element={<Landing />} exact />
           <Route path='/login' element={<Login />} exact />
           <Route path='/signup' element={<Signup />} exact />
@@ -43,6 +47,9 @@ function App() {
           <Route path="/videos" element={<Videos />} exact />
           <Route path="/child/puzzles" element={<Puzzles />} exact />
           <Route path='/adult/ViewEvent' element={<ViewEvent/>} exact/>
+          <Route path='/adult/ViewEvent/create' element={<CreateEvent/>} exact/>
+          <Route path='/adult/ViewEvent/delete' element={<DeleteEvent/>} exact/>
+          <Route path='/events/:id' element={<EventDetails/>} exact/>
           <Route path='/adult/Volunteer' element={<Volunteer/>} exact/>
           <Route path='/adult/Volunteer/VolunteerForm' element={<VolunteerForm/>} exact/>
           <Route path='/adult/Volunteer/VolunteerForm/Volunteer' element={<Volunteer/>} exact/>
@@ -60,7 +67,8 @@ function App() {
           <Route path='/profile' element={<Profile/>} exact/>
           <Route path='/adult/ShareStories/story' element={<Story/>} exact/>
 
-        </Routes>
+          </Routes>
+        </main>
         <div>
           <Footer />
         </div>

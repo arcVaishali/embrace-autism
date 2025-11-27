@@ -19,8 +19,8 @@ const Profile = () => {
   const [registeredEvents, setRegisteredEvents] = useState([]);
   const [selectedField, setSelectedField] = useState("All");
 
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   useEffect(() => {
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     fetch(`${API_BASE_URL}/users/userData`, {
       method: "GET",
       credentials: "include",
@@ -78,7 +78,7 @@ const Profile = () => {
         }
       })
       .catch((err) => console.log(err));
-  }, []);
+  } , []);
 
   useEffect(() => {
     const error = {};
@@ -308,77 +308,77 @@ const Profile = () => {
   };
 
 
-  const Events = () => (
-    <div className="grid grid-cols-12 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-      <div className="col-span-12 flex justify-center gap-4 p-4 overflow-x-auto">
-            {[ "All" , "Registered Events" , "Created Events"].map((field) => (
-              <button
-                key={field}
-                onClick={() => setSelectedField(field)}
-                className={`px-6 py-2 rounded-md whitespace-nowrap ${
-                  selectedField === field
-                    ? "bg-black text-white"
-                    : "bg-white border"
-                }`}
-              >
-                {field}
-              </button>
-            ))}
-          </div>
+  // const Events = () => (
+  //   <div className="grid grid-cols-12 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+  //     <div className="col-span-12 flex justify-center gap-4 p-4 overflow-x-auto">
+  //           {[ "All" , "Registered Events" , "Created Events"].map((field) => (
+  //             <button
+  //               key={field}
+  //               onClick={() => setSelectedField(field)}
+  //               className={`px-6 py-2 rounded-md whitespace-nowrap ${
+  //                 selectedField === field
+  //                   ? "bg-black text-white"
+  //                   : "bg-white border"
+  //               }`}
+  //             >
+  //               {field}
+  //             </button>
+  //           ))}
+  //         </div>
 
-          <div className="col-span-12 p-4">{renderSection()}</div>
-      {showRegisteredEvents ? (
-        registeredEvents.length ? (
-          registeredEvents.map((event, index) => (
-            <EventCard key={index} {...event} owner={event.owner.username} />
-          ))
-        ) : (
-          <p className="col-span-full text-sm text-gray-600">
-            No registered events found.
-          </p>
-        )
-      ) : (
-        <></>
-      )}
-      {showCreatedEvents ? (
-        createdEvents.length ? (
-          createdEvents.map((event, index) => (
-            <EventCard key={index} {...event} owner={event.owner.username} />
-          ))
-        ) : (
-          <p className="col-span-full text-sm text-gray-600">
-            No created events found.
-          </p>
-        )
-      ) : (
-        <></>
-      )}
-    </div>
-  );
+  //         <div className="col-span-12 p-4">{renderSection()}</div>
+  //     {showRegisteredEvents ? (
+  //       registeredEvents.length ? (
+  //         registeredEvents.map((event, index) => (
+  //           <EventCard key={index} {...event} owner={event.owner.username} />
+  //         ))
+  //       ) : (
+  //         <p className="col-span-full text-sm text-gray-600">
+  //           No registered events found.
+  //         </p>
+  //       )
+  //     ) : (
+  //       <></>
+  //     )}
+  //     {showCreatedEvents ? (
+  //       createdEvents.length ? (
+  //         createdEvents.map((event, index) => (
+  //           <EventCard key={index} {...event} owner={event.owner.username} />
+  //         ))
+  //       ) : (
+  //         <p className="col-span-full text-sm text-gray-600">
+  //           No created events found.
+  //         </p>
+  //       )
+  //     ) : (
+  //       <></>
+  //     )}
+  //   </div>
+  // );
 
-  const Stories = () => <div className="p-4">Stories section coming soon.</div>;
-  const Volunteering = () => (
-    <div className="p-4">Volunteering section coming soon.</div>
-  );
+  // const Stories = () => <div className="p-4">Stories section coming soon.</div>;
+  // const Volunteering = () => (
+  //   <div className="p-4">Volunteering section coming soon.</div>
+  // );
 
-  const renderSection = () => {
-    switch (selectedField) {
-      case "Events":
-        return <Events />;
-      case "Stories":
-        return <Stories />;
-      case "Volunteering":
-        return <Volunteering />;
-      default:
-        return (
-          <>
-            <Events />
-            <Stories />
-            <Volunteering />
-          </>
-        );
-    }
-  };
+  // const renderSection = () => {
+  //   switch (selectedField) {
+  //     case "Events":
+  //       return <Events />;
+  //     case "Stories":
+  //       return <Stories />;
+  //     case "Volunteering":
+  //       return <Volunteering />;
+  //     default:
+  //       return (
+  //         <>
+  //           <Events />
+  //           <Stories />
+  //           <Volunteering />
+  //         </>
+  //       );
+  //   }
+  // };
 
   return (
     <div className="grid grid-rows-12 justify-center p-10">
@@ -546,7 +546,8 @@ const Profile = () => {
             ))}
           </div>
 
-          <div className="col-span-12 p-4">{renderSection()}</div>
+          <div className="col-span-12 p-4">Hi</div>
+          {/* <div className="col-span-12 p-4">{renderSection()}</div> */}
         </div>
       ) : (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">

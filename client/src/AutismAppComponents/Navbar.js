@@ -185,6 +185,7 @@ const Navbar = () => {
             to="/profile"
             onClick={() => setShowDropdownMenu((prev) => !prev)}
             className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+            reloadDocument
           >
             Profile
           </Link>
@@ -192,6 +193,7 @@ const Navbar = () => {
             to="/settings"
             onClick={() => setShowDropdownMenu((prev) => !prev)}
             className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+            reloadDocument
           >
             Settings
           </Link>
@@ -199,12 +201,14 @@ const Navbar = () => {
             to="/login"
             onClick={() => setShowDropdownMenu((prev) => !prev)}
             className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+            reloadDocument
           >
             Login
           </Link>
           <button
             onClick={handleLogout}
             className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+            reloadDocument
           >
             Logout
           </button>

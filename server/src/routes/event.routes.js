@@ -16,13 +16,18 @@ const {
 
 eventRouter.route("/get-all-community-event").get(getAllEvents);
 eventRouter.route("/get-upcoming-community-event").get(getUpcomingEvents);
-eventRouter.route("/get-this-community-event").get(getEventById);
+// use :id for fetching a single event
+eventRouter.route("/get-this-community-event/:id").get(getEventById);
 
+// create event (protected)
 eventRouter.route("/create-community-event").post(verifyJWT , createEvent);
-eventRouter.route("/join-community-event").post(verifyJWT , registerForEvent);
-eventRouter.route("/unregister-community-event").post(verifyJWT , unregisterFromEvent);
-eventRouter.route("/delete-community-event").post(verifyJWT , deleteEvent);
-eventRouter.route("/update-this-community-event").post(verifyJWT , updateEvent);
+// join / unregister use :id of the event
+eventRouter.route("/join-community-event/:id").post(verifyJWT , registerForEvent);
+eventRouter.route("/unregister-community-event/:id").post(verifyJWT , unregisterFromEvent);
+// delete with :id (protected)
+eventRouter.route("/delete-community-event/:id").delete(verifyJWT , deleteEvent);
+// update an event by id
+eventRouter.route("/update-this-community-event/:id").post(verifyJWT , updateEvent);
 
 
 module.exports = { eventRouter };

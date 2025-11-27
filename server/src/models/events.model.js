@@ -9,7 +9,7 @@ const eventSchema = new Schema(
     },
     coverImage: {
       type: String,
-      required: true,
+      // required: true,
     },
     about: {
       type: String,

@@ -10,10 +10,10 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [termsAgreed, setTermsAgreed] = useState(false);
-  const [isFormValid, setIsFormValid] = useState(false);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
   // const [formValidity, setFormValidity] = useState({
   //   isEmailValid: false,
   //   isPasswordValid: false,
@@ -56,7 +56,7 @@ const Signup = () => {
 
     // Validation
     const isEmailValid = email.includes("@");
-    const isPasswordValid = password.length > 8;
+    const isPasswordValid = password.length >= 8;
     const isConfirmPasswordValid = password.trim() === confirmPassword.trim();
     const isDOBValid = DOB !== "";
     const areNamesValid = firstName.trim() !== "" && lastName.trim() !== "";

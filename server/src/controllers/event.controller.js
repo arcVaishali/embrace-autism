@@ -6,9 +6,9 @@ const { User } = require("../models/user.model");
 
 
 const createEvent = asyncHandler(async (req, res) => {
-  const { name, coverImage, about, eventDate } = req.body;
+  const { name, about, eventDate } = req.body;
   const owner = req.user._id ;
-  if (!name || !coverImage || !about || !eventDate) {
+  if (!name || !about || !eventDate) {
     throw new ApiError(400, "All fields are required");
   }
 
@@ -90,7 +90,11 @@ const registerForEvent = asyncHandler(async (req, res) => {
   const eventId = req.params.id;
   const user = await User.findById(userId);
   if (!user) throw new ApiError(404, "User not found");
-  if (!user.eventsRegistered.includes(eventId)) {
+  const alreadyRegistered = user.eventsRegistered.some(
+    (eid) => eid.toString() === eventId.toString()
+  );
+
+  if (!alreadyRegistered) {
     user.eventsRegistered.push(eventId);
     await user.save();
   }

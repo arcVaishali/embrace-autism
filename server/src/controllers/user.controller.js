@@ -89,17 +89,28 @@ const signup = asyncHandler(async (req, res) => {
 
   // console.log(password);
 
+  // basic validations
   if (
     [firstName, lastName, password, email, phoneNumber].some(
       (field) => typeof field !== "string" || field.trim() === ""
     )
   ) {
-    throw new ApiError("One of the fields is empty");
+    throw new ApiError(400, "One of the required string fields is missing or empty");
   }
 
-  const existedUser = await User.findOne({ email: email });
+  if (!DOB) {
+    throw new ApiError(400, "DOB is required");
+  }
+
+  if (typeof termsAgreed !== "boolean" || !termsAgreed) {
+    throw new ApiError(400, "termsAgreed must be true");
+  }
+
+  // normalize email usage throughout
+  const normalizedEmail = String(email).toLowerCase();
+  const existedUser = await User.findOne({ email: normalizedEmail });
   if (existedUser) {
-    throw new ApiError("User already exists");
+    throw new ApiError(409, "User already exists");
     // return res
     // .status(300)
     // .json(new ApiError(200, "User already exists"));
@@ -111,7 +122,7 @@ const signup = asyncHandler(async (req, res) => {
     firstName,
     lastName,
     password,
-    email,
+    email: normalizedEmail,
     phoneNumber,
     DOB,
     termsAgreed,
@@ -137,21 +148,18 @@ const updatePassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword } = req.body;
 
   // validation
-  if (
-    oldPassword?.trim() === "" ||
-    newPassword?.trim() === ""
-  ) {
-    throw new ApiError("One of the fields is empty");
+  if (!oldPassword || !newPassword || oldPassword?.trim() === "" || newPassword?.trim() === "") {
+    throw new ApiError(400, "One of the password fields is empty");
   }
 
   if (newPassword?.trim().length < 8) {
-    throw new ApiError("Password must be 8 characters");
+    throw new ApiError(400, "Password must be at least 8 characters");
   }
 
   const user = await User.findOne({ email: loggedInUser.email });
   const isPasswordValid = await user.isPasswordCorrect(oldPassword);
   if (!isPasswordValid) {
-    throw new ApiError("Invalid current password");
+    throw new ApiError(401, "Invalid current password");
   }
 
   const options = {
@@ -180,13 +188,16 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
   const loggedInUser = req.user;
   const updatedUser = req.body;
 
+  // be defensive: ensure fields exist and are strings before calling trim()
   if (
-    updatedUser.firstName.trim() === "" ||
-    updatedUser.lastName.trim() === "" ||
-    updatedUser.dob.trim() === "" ||
-    updatedUser.about.trim() === ""
+    !updatedUser ||
+    !updatedUser.firstName ||
+    !updatedUser.lastName ||
+    !updatedUser.dob ||
+    !updatedUser.about ||
+    [updatedUser.firstName, updatedUser.lastName, updatedUser.dob, updatedUser.about].some((f) => typeof f !== "string" || f.trim() === "")
   ) {
-    throw new ApiError("One of the fields is empty");
+    throw new ApiError(400, "One of the account detail fields is empty");
   }
 
   const updateFields = {};
@@ -320,19 +331,18 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             secure: true
         }
     
-        const {accessToken, newRefreshToken} = await generateAccessAndRefereshTokens(user._id)
-    
+        // generate new tokens
+        const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
+          user._id
+        );
+
         return res
-        .status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", newRefreshToken, options)
-        .json(
-            new ApiResponse(
-                200, 
-                {accessToken, refreshToken: newRefreshToken},
-                "Access token refreshed"
-            )
-        )
+          .status(200)
+          .cookie("accessToken", accessToken, options)
+          .cookie("refreshToken", refreshToken, options)
+          .json(
+            new ApiResponse(200, { accessToken, refreshToken }, "Access token refreshed")
+          );
     } catch (error) {
         throw new ApiError(401, error?.message || "Invalid refresh token")
     }
