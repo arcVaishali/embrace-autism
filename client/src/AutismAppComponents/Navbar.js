@@ -134,12 +134,12 @@ const Navbar = () => {
               >
                 Community Events
               </Link>
-              <Link
+              {/* <Link
                 to="/adult/Volunteer"
                 className="text-sm font-semibold leading-6 text-gray-900"
               >
                 Volunteer
-              </Link>
+              </Link> */}
               <Link
                 to="/adult/ShareStories"
                 className="text-sm font-semibold leading-6 text-gray-900"
