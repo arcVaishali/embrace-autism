@@ -23,9 +23,9 @@ const storySchema = new Schema(
       type: Number,
       default: 0,
     },
-    postedOn:{
-        type:Number
-    },
+    // postedOn:{
+    //     type:Number
+    // },
     slug: {
       type: String,
     },
@@ -41,9 +41,9 @@ storySchema.pre("save", function (next) {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)+/g, "");
   }
-  if (this.isModified("postedOn") && this.postedOn instanceof Date) {
-    this.postedOn = this.postedOn.getTime();
-  }
+//   if (this.isModified("postedOn") && this.postedOn instanceof Date) {
+//     this.postedOn = this.postedOn.getTime();
+//   }
   next();
 });
 
@@ -81,20 +81,11 @@ storySchema.methods.isOwner = function (userId) {
   return this.postedBy && this.postedBy.toString() === userId.toString();
 };
 
-storySchema.methods.formatDate = function () {
-  const date = new Date(this.postedOn);
-  return date.toLocaleDateString();
-};
-
 // Static Methods
 storySchema.statics.findByOwner = function (ownerId) {
   return this.find({ postedBy: ownerId });
 };
 
-storySchema.statics.upcomingEvents = function () {
-  const now = Date.now();
-  return this.find({ postedOn: { $gt: now } });
-};
 
 const Story = mongoose.model("Story", storySchema);
 module.exports = { Story };
