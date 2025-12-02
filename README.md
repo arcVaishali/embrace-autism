@@ -69,7 +69,19 @@ README.md — This file
    # Update .env with required variables (e.g. DB credentials, API keys)
    npm start          # or yarn start / npm run dev
    ```
-
+2. **.env.sample file**
+   ```
+   MONGODBURI=""
+   PORT=5000
+   CORS_ORIGIN = "http://localhost:3000"
+   ACCESS_TOKEN_SECRET=
+   ACCESS_TOKEN_EXPIRY=
+   REFRESH_TOKEN_SECRET=
+   REFRESH_TOKEN_EXPIRY=
+   CLOUDINARY_CLOUD_NAME=
+   CLOUDINARY_API_KEY=
+   CLOUDINARY_API_SECRET=
+   ```
 3. **Set up frontend**
 
    ```bash
